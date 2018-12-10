@@ -2,15 +2,16 @@ import pandas as pd
 import numpy as np
 import itertools
 
-def make_attendances_dataframe(num_atten,pat_per_day=10):
+def make_attendances_dataframe(num_atten,pat_per_day=10, seed=True):
     """
     creates a random df with attendances as rows of size provided by user.
     """
     #### make lists for input to df 
-    atten_id = np.arange(num_atten)
+    atten_id = np.arange(num_atten)+1000
     num_patients = int(num_atten/pat_per_day)
     pat_id = np.random.randint(0,num_atten*1000,num_atten)
-    np.random.seed(2)
+    if seed == True:
+        np.random.seed(2)
     # arrivals
     num_days = int(num_atten/pat_per_day)
     start_time = pd.datetime(2018,1,1) # set a date to start the attendances at
@@ -40,7 +41,7 @@ def make_attendances_dataframe(num_atten,pat_per_day=10):
         'arrival_datetime':arrival_time,
         'time_in_department':time_in_department,
         'ambulance_arrival':ambulance}
-    df = pd.DataFrame(d).set_index('atten_id')
+    df = pd.DataFrame(d)#.set_index('atten_id')
 
     # make departure times
     f = lambda x, y : x + pd.Timedelta(y,'m')
@@ -55,6 +56,7 @@ def make_attendances_dataframe(num_atten,pat_per_day=10):
 def make_timeindex_dataframe(df,col_label,freq='D'):
     """calculates the first and last times contained in dataframe.
     creates new df with unique hourly or daily time interval in one column."""
+    df = df.set_index('atten_id') # mod for script
     # get_datetime cols
     cols = df.select_dtypes(include='datetime').columns
     start = df[cols].min().min().replace(hour=0, minute=0,second=0)#values
