@@ -50,6 +50,12 @@ def make_attendances_dataframe(num_atten,pat_per_day=10, seed=True):
     # make gender
     df['gender'] = df['pat_id'].apply(lambda x : x%2)
     
+    #sort values by arrival time
+    df = df.sort_values('arrival_datetime')
+    
+    # change att dtype
+    df['atten_id'] = df['atten_id'].astype('int64')
+    
     return(df)
 
 
@@ -106,7 +112,7 @@ def make_HourlyTimeAttenNum_dataframe(df,arrival_col,departure_col):
             row_count += 1 # add to row count for new array    
     # put into df
     data = {'atten_id':ids,
-       'timestamp':timestamps}
+       'hour':timestamps}
     df_new = pd.DataFrame(data=data)
 
     return(df_new)
